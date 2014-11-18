@@ -6,7 +6,8 @@ This module allows the user to install the
 
 ## COPYRIGHT
 
-&copy; 2014. Vikas N Kumar [@vikasnkumar]. Selective Intellect LLC. All Rights Reserved.
+&copy; 2014. Vikas N Kumar [@vikasnkumar](https://github.com/vikasnkumar).
+[Selective Intellect LLC](http://selectiveintellect.com). All Rights Reserved.
 
 
 ## LICENSE
