@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Alien::Base::ModuleBuild;
 
+die 'No support for OS' if $^O =~ /mswin32|cygwin/i;
 $Alien::Base::ModuleBuild::Verbose = 1;
 
 my %win32 = ();
