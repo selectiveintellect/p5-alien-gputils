@@ -76,3 +76,9 @@
 # Avoid archives of this distribution
 \bAlien-gputils-[\d\.\_]+
 \.bak$
+tags
+TAGS
+todo
+TODO
+\b_share
+\b_alien
