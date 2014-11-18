@@ -1,4 +1,14 @@
-vic-suite
-=========
+# Alien::gputils
 
-Suite of helper applications for VIC(TM)
+This module allows the user to install the
+[gputils](http://gputils.sourceforge.net) toolchain for use by the
+[VIC&trade;](http://selectiveintellect.github.io/vic) compiler.
+
+## COPYRIGHT
+
+&copy; 2014. Vikas N Kumar [@vikasnkumar]. Selective Intellect LLC. All Rights Reserved.
+
+
+## LICENSE
+
+Apache 2.0
