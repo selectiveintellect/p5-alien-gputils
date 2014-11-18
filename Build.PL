@@ -35,7 +35,7 @@ my $build = Alien::Base::ModuleBuild->new(
         host => 'downloads.sourceforge.net',
         location => '/project/gputils/gputils/1.4.0/',
         exact_filename => 'gputils-1.4.0-1.tar.gz',
-        exact_version => '1.4.0-1',
+        exact_version => '1.4.0',
         c_compiler_required => 1,
     },
     alien_build_commands => [
@@ -46,7 +46,7 @@ my $build = Alien::Base::ModuleBuild->new(
     alien_install_commands => [
         'make install'
     ],
-    alien_version_check => q(/usr/bin/gpasm -v 2>&1 | awk '{print $1;}' | sed s/gpasm-//g),
+    alien_version_check => q(gpasm -v 2>&1 | awk '{print $1;}' | sed s/gpasm-//g),
     alien_msys => $alien_msys,
     meta_merge => {
         resources => {
