@@ -27,6 +27,7 @@ my $build = Alien::Base::ModuleBuild->new(
     requires => {
         'perl' => '5.10.0',
         'File::Spec' => 0,
+        'File::Which' => 0,
         'Alien::Base' => 0,
         %win32,
     },
