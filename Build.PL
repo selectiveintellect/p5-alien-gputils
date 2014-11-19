@@ -56,6 +56,7 @@ my $build = $class->new(
         'Test::More' => 0,
         'Module::Build' => 0,
         'Capture::Tiny' => 0,
+        'Alien::bison' => 0,
     },
     requires => {
         'perl' => '5.10.0',
@@ -82,6 +83,7 @@ my $build = $class->new(
         'make install'
     ],
     alien_msys => $alien_msys,
+    alien_bin_requires => { 'Alien::bison' => 0 },
     meta_merge => {
         resources => {
             repository => "https://github.com/selectiveintellect/p5-alien-gputils",
