@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Alien::Base::ModuleBuild;
 
-die 'No support for OS' if $^O =~ /mswin32|cygwin/i;
+die 'No support for OS' if $^O =~ /mswin32/i;
 $Alien::Base::ModuleBuild::Verbose = 1;
 
 my %win32 = ();
@@ -25,10 +25,11 @@ my $class = Alien::Base::ModuleBuild->subclass(
                 print STDERR "Found gputils VERSION: $ver\n";
                 # find the path where it is found
                 my $path = which('gpasm');
+                return unless $path;
                 my @dirs = File::Spec->splitpath($path);
-                pop @dirs;
-                $path = File::Spec->catdir(@dirs);
-                print STDERR "Found gputils installed in $path\n" if $path;
+                pop @dirs if @dirs;
+                $path = File::Spec->catdir(@dirs) if @dirs;
+                print STDERR "Found gputils installed in $path\n" if defined $path;
                 return unless $1 > 0;
                 return unless $2 > 2;
                 $self->config_data(gputils_system_path => $path) if defined $path;
@@ -92,6 +93,7 @@ my $build = $class->new(
 $build->create_build_script;
 $build->dispatch('distmeta');
 $build->dispatch('manifest');
+$build->dispatch('build');
 
 __END__
 #### COPYRIGHT: Vikas N Kumar. Selective Intellect LLC. All Rights Reserved

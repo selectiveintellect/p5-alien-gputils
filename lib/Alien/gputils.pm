@@ -4,7 +4,7 @@ use warnings;
 use File::Which qw(which);
 use File::Spec;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 $VERSION = eval $VERSION;
 
 use parent 'Alien::Base';
@@ -13,10 +13,11 @@ sub _get_gputils {
     my $self = shift;
     my $type = shift;
     my $bd = $self->bin_dir;
-    my $exe = File::Spec->catfile($bd, $type);
-    return $exe if -e $exe;
-    $exe = which($type);
-    return $exe;
+    if (defined $bd) {
+        my $exe = File::Spec->catfile($bd, $type);
+        return $exe if (defined $exe and -e $exe);
+    }
+    return which($type);
 }
 sub gpasm { return $_[0]->_get_gputils('gpasm'); }
 sub gplink { return $_[0]->_get_gputils('gplink'); }
@@ -55,7 +56,7 @@ The source code is taken from L<http://gputils.sourceforge.net>.
 
 =head1 VERSION
 
-0.03
+0.04
 
 =head1 METHODS
 
