@@ -8,7 +8,37 @@ $Alien::Base::ModuleBuild::Verbose = 1;
 my %win32 = ();
 %win32 = ('Alien::MSYS' => 0) if $^O =~ /Win32/i;
 my $alien_msys = 1 if $^O =~ /Win32/i;
-my $build = Alien::Base::ModuleBuild->new(
+my $class = Alien::Base::ModuleBuild->subclass(
+    class => 'Alien::gputils::ModuleBuild',
+    code => q {
+        use File::Spec;
+        use File::Which qw(which);
+        use Capture::Tiny qw(capture_merged);
+        sub alien_check_installed_version {
+            my $self = shift;
+            my $output = capture_merged {
+                `gpasm -v`;
+            };
+            print STDERR "Got gpasm version: $output" if $output;
+            if ($output =~ /gpasm-(\d+)\.(\d+)\.(\d+)/) {
+                my $ver = sprintf "%d.%d.%d", $1, $2, $3;
+                print STDERR "Found gputils VERSION: $ver\n";
+                # find the path where it is found
+                my $path = which('gpasm');
+                my @dirs = File::Spec->splitpath($path);
+                pop @dirs;
+                $path = File::Spec->catdir(@dirs);
+                print STDERR "Found gputils installed in $path\n" if $path;
+                return unless $1 > 0;
+                return unless $2 > 2;
+                $self->config_data(gputils_system_path => $path) if defined $path;
+                return $ver;
+            }
+            return;
+        }
+    }
+);
+my $build = $class->new(
     module_name => 'Alien::gputils',
     license => 'apache',
     dist_author => 'Vikas N. Kumar <vikas@cpan.org>',
@@ -18,11 +48,13 @@ my $build = Alien::Base::ModuleBuild->new(
         'Module::Build' => 0,
         'Alien::Base' => '0.006',
         'Alien::Base::ModuleBuild' => '0.006',
+        'Capture::Tiny' => 0,
     },
     build_requires => {
         'Alien::Base::ModuleBuild' => '0.006',
         'Test::More' => 0,
         'Module::Build' => 0,
+        'Capture::Tiny' => 0,
     },
     requires => {
         'perl' => '5.10.0',
@@ -48,7 +80,6 @@ my $build = Alien::Base::ModuleBuild->new(
     alien_install_commands => [
         'make install'
     ],
-    alien_version_check => q(gpasm -v 2>&1 | awk '{print $1;}' | sed s/gpasm-//g),
     alien_msys => $alien_msys,
     meta_merge => {
         resources => {

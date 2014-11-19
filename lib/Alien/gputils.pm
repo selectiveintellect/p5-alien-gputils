@@ -4,7 +4,7 @@ use warnings;
 use File::Which qw(which);
 use File::Spec;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 $VERSION = eval $VERSION;
 
 use parent 'Alien::Base';
@@ -25,6 +25,14 @@ sub gpdasm { return $_[0]->_get_gputils('gpdasm'); }
 sub gpstrip { return $_[0]->_get_gputils('gpstrip'); }
 sub gpvc { return $_[0]->_get_gputils('gpvc'); }
 sub gpvo { return $_[0]->_get_gputils('gpvo'); }
+sub bin_dir {
+    my $self = shift;
+    if ($self->install_type('system')) {
+        my ($path) = $self->config('gputils_system_path');
+        return $path if $path;
+    }
+    return $self->SUPER::bin_dir();
+}
 
 1;
 
@@ -47,7 +55,7 @@ The source code is taken from L<http://gputils.sourceforge.net>.
 
 =head1 VERSION
 
-0.01
+0.03
 
 =head1 METHODS
 
@@ -92,7 +100,7 @@ module or if already installed in the C<$PATH>.
 
 This method provides the directory for the binaries that form the package of
 gputils such as C<gpasm> and C<gplink> which are needed by their downstream
-modules like L<VIC>. This is useful only if it the binaries have been built.
+modules like L<VIC>.
 
 =item B<config>
 
