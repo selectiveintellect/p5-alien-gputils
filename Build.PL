@@ -1,22 +1,49 @@
 use strict;
 use warnings;
+use Env qw(@PATH);
 use Alien::Base::ModuleBuild;
 
-die 'No support for OS' if $^O =~ /mswin32/i;
 $Alien::Base::ModuleBuild::Verbose = 1;
 
-my %win32 = ();
-%win32 = ('Alien::MSYS' => 0) if $^O =~ /Win32/i;
-my $alien_msys = 1 if $^O =~ /Win32/i;
+my %nonwin32 = ();
+if ($^O =~ /mswin32/i) {
+    foreach (qw{PROGRAMFILES ProgramFiles PROGRAMFILES(X86)
+                ProgramFiles(X86) ProgamFileW6432 PROGRAMFILESW6432}) {
+        push @PATH, File::Spec->catdir($ENV{$_}, 'gputils', 'bin') if exists $ENV{$_};
+    }
+} else {
+    %nonwin32 = ('Alien::bison' => 0);
+}
+
 my $class = Alien::Base::ModuleBuild->subclass(
     class => 'Alien::gputils::ModuleBuild',
     code => q {
         use File::Spec;
+        use Env qw(@PATH);
         use File::Which qw(which);
         use Capture::Tiny qw(capture_merged);
-        sub alien_check_installed_version {
+        
+        if ($^O =~ /mswin32/i) {
+            foreach (qw{PROGRAMFILES ProgramFiles PROGRAMFILES(X86)
+                    ProgramFiles(X86) ProgamFileW6432 PROGRAMFILESW6432}) {
+                push @PATH, File::Spec->catdir($ENV{$_}, 'gputils', 'bin') if exists $ENV{$_};
+            }
+        }
+        sub gpasm_check {
             my $self = shift;
             my $path = which('gpasm');
+            unless (defined $path) {
+                if ($^O =~ /mswin32/i) {
+                    warn q{You need to install the gputils from their Windows
+                        specific installer from the website http://sourceforge.net/projects/gputils/files/};
+                    die 'No support for OS';
+                }
+            }
+            return $path;
+        }
+        sub alien_check_installed_version {
+            my $self = shift;
+            my $path = $self->gpasm_check();
             if (defined $path) {
                 my $output = capture_merged {
                     `gpasm -v`;
@@ -71,7 +98,6 @@ my $build = $class->new(
         'File::Spec' => 0,
         'File::Which' => 0,
         'Alien::Base' => '0.006',
-        %win32,
     },
     alien_name => 'gputils',
     alien_repository => {
@@ -90,8 +116,7 @@ my $build = $class->new(
     alien_install_commands => [
         'make install'
     ],
-    alien_msys => $alien_msys,
-    alien_bin_requires => { 'Alien::bison' => 0 },
+    alien_bin_requires => { %nonwin32 },
     meta_merge => {
         resources => {
             repository => "https://github.com/selectiveintellect/p5-alien-gputils",
