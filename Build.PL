@@ -16,25 +16,33 @@ my $class = Alien::Base::ModuleBuild->subclass(
         use Capture::Tiny qw(capture_merged);
         sub alien_check_installed_version {
             my $self = shift;
-            my $output = capture_merged {
-                `gpasm -v`;
-            };
-            print STDERR "Got gpasm version: $output" if $output;
-            if ($output =~ /gpasm-(\d+)\.(\d+)\.(\d+)/) {
-                my $ver = sprintf "%d.%d.%d", $1, $2, $3;
-                print STDERR "Found gputils VERSION: $ver\n";
-                # find the path where it is found
-                my $path = which('gpasm');
-                return unless $path;
-                my @dirs = File::Spec->splitpath($path);
-                pop @dirs if @dirs;
-                $path = File::Spec->catdir(@dirs) if @dirs;
-                print STDERR "Found gputils installed in $path\n" if defined $path;
-                return unless $1 > 0;
-                return unless $2 > 2;
-                $self->config_data(gputils_system_path => $path) if defined $path;
-                return $ver;
+            my $path = which('gpasm');
+            if (defined $path) {
+                my $output = capture_merged {
+                    `gpasm -v`;
+                };
+                print STDERR "Got gpasm version: $output" if $output;
+                if ($output =~ /gpasm-(\d+)\.(\d+)\.(\d+)/) {
+                    unless ($1 > 0 and $2 > 2) {
+                        $ENV{ALIEN_FORCE} = 1;
+                        $Alien::Base::ModuleBuild::Force = 1;
+                        return;
+                    }
+                    my $ver = sprintf "%d.%d.%d", $1, $2, $3;
+                    print STDERR "Found gputils VERSION: $ver\n";
+                    # find the path where it is found
+                    my @dirs = File::Spec->splitpath($path);
+                    pop @dirs if @dirs;
+                    $path = File::Spec->catdir(@dirs) if @dirs;
+                    print STDERR "Found gputils installed in $path\n" if defined $path;
+                    return unless $1 > 0;
+                    return unless $2 > 2;
+                    $self->config_data(gputils_system_path => $path) if defined $path;
+                    return $ver;
+                }
             }
+            $ENV{ALIEN_FORCE} = 1;
+            $Alien::Base::ModuleBuild::Force = 1;
             return;
         }
     }
@@ -62,7 +70,7 @@ my $build = $class->new(
         'perl' => '5.10.0',
         'File::Spec' => 0,
         'File::Which' => 0,
-        'Alien::Base' => 0,
+        'Alien::Base' => '0.006',
         %win32,
     },
     alien_name => 'gputils',
