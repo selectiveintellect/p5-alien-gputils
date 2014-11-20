@@ -14,7 +14,7 @@ if ($^O =~ /mswin32/i) {
 use File::Which qw(which);
 use File::Spec;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 $VERSION = eval $VERSION;
 
 use parent 'Alien::Base';
@@ -68,7 +68,7 @@ The source code is taken from L<http://gputils.sourceforge.net>.
 
 =head1 VERSION
 
-0.06
+0.07
 
 =head1 METHODS
 
