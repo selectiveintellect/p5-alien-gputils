@@ -98,7 +98,6 @@ my $build = $class->new(
         'Alien::bison' => 0,
     },
     requires => {
-        'perl' => '5.10.0',
         'File::Spec' => 0,
         'File::Which' => 0,
         'Alien::Base' => '0.006',
