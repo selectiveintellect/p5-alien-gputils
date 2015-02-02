@@ -89,13 +89,14 @@ my $build = $class->new(
         'Alien::Base' => '0.006',
         'Alien::Base::ModuleBuild' => '0.006',
         'Capture::Tiny' => 0,
+        %nonwin32,
     },
     build_requires => {
         'Alien::Base::ModuleBuild' => '0.006',
         'Test::More' => 0,
         'Module::Build' => 0,
         'Capture::Tiny' => 0,
-        'Alien::bison' => 0,
+        %nonwin32,
     },
     requires => {
         'File::Spec' => 0,
