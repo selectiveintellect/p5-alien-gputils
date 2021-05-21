@@ -14,7 +14,7 @@ if ($^O =~ /mswin32/i) {
 use File::Which qw(which);
 use File::Spec;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 $VERSION = eval $VERSION;
 
 use parent 'Alien::Base';
